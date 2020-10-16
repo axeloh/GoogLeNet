@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='cifar10', choices=['cifar10', 'cifar100'])
 parser.add_argument('--n_epochs', type=int, default=200)
 parser.add_argument('--batch_size', type=int, default=256)
-parser.add_argument('--lr',  type=int, default=2e-4)
+parser.add_argument('--lr',  type=int, default=0.01)
 parser.add_argument('--use_cuda',  type=bool, default=True)
 
 args = parser.parse_args()
@@ -58,8 +58,6 @@ for epoch in range(n_epochs):
     for (batch_x, batch_y) in train_loader:
         batch_x = batch_x.to(device)
         batch_y = batch_y.to(device)
-        print(batch_x.min())
-        print(batch_x.max())
         logits = model(batch_x).unsqueeze(-1)
         probs = torch.softmax(logits, dim=1)
         loss = F.cross_entropy(probs, batch_y.unsqueeze(-1))
