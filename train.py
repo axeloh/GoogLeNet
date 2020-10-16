@@ -8,7 +8,7 @@ import torchvision
 import torch
 import torchvision.transforms as transforms
 import torch.nn.functional as F
-import tqdm
+from tqdm import tqdm
 from inception_net import GoogLeNet
 
 parser = argparse.ArgumentParser()
