@@ -13,8 +13,8 @@ from inception_net import GoogLeNet
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--dataset', type=str, default='cifar10', choices=['cifar10', 'cifar100'])
-parser.add_argument('--n_epochs', type=int, default=200)
-parser.add_argument('--batch_size', type=int, default=256)
+parser.add_argument('--n_epochs', type=int, default=50)
+parser.add_argument('--batch_size', type=int, default=64)
 parser.add_argument('--lr',  type=int, default=0.01)
 parser.add_argument('--use_cuda',  type=bool, default=True)
 
@@ -36,6 +36,7 @@ if args.dataset == 'cifar100':
     test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform)
 
 use_cuda = args.use_cuda and torch.cuda.is_available()
+print(f'Using cuda: {use_cuda}')
 device = torch.device('cuda') if use_cuda else None
 n_epochs = args.n_epochs
 batch_size = args.batch_size
