@@ -37,7 +37,7 @@ if args.dataset == 'cifar100':
     test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform)
 
 
-def val_loss(model, test_loader):
+def compute_val_loss(model, test_loader):
     model.eval()
     loss = 0
     with torch.no_grad():
@@ -67,6 +67,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 # Train
 train_losses = []
 val_losses = []
+print(f'Init val loss: {compute_val_loss(model, test_loader)}')
 
 for epoch in range(n_epochs):
     for (batch_x, batch_y) in tqdm(train_loader):
@@ -80,7 +81,7 @@ for epoch in range(n_epochs):
         optimizer.step()
         train_losses.append(loss.item())
 
-    val_loss = val_loss(model, test_loader)
+    val_loss = compute_val_loss(model, test_loader)
     print(f'{epoch + 1}/{n_epochs} epochs | val_loss = {val_loss:.3f}')
 
 
