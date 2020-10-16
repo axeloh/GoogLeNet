@@ -8,6 +8,7 @@ import torchvision
 import torch
 import torchvision.transforms as transforms
 import torch.nn.functional as F
+import tqdm
 from inception_net import GoogLeNet
 
 parser = argparse.ArgumentParser()
@@ -45,9 +46,7 @@ lr = args.lr
 train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False)
 
-model = GoogLeNet()
-if use_cuda:
-    model.cuda()
+model = GoogLeNet().to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
@@ -56,7 +55,7 @@ train_losses = []
 # test_losses = []
 
 for epoch in range(n_epochs):
-    for (batch_x, batch_y) in train_loader:
+    for (batch_x, batch_y) in tqdm(train_loader):
         batch_x = batch_x.to(device)
         batch_y = batch_y.to(device)
         logits = model(batch_x).unsqueeze(-1)
