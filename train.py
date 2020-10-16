@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='cifar10', choices=['cifar10', 'cifar100'])
 parser.add_argument('--n_epochs', type=int, default=50)
 parser.add_argument('--batch_size', type=int, default=64)
-parser.add_argument('--lr',  type=int, default=0.01)
+parser.add_argument('--lr',  type=int, default=0.1)
 parser.add_argument('--use_cuda',  type=bool, default=True)
 
 args = parser.parse_args()
@@ -36,6 +36,20 @@ if args.dataset == 'cifar100':
     train_data = CIFAR100(root='data/cifar100', train=True, download=True, transform=transform)
     test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform)
 
+
+def val_loss(model, test_loader):
+    model.eval()
+    loss = 0
+    with torch.no_grad():
+        for (batch_x, batch_y) in tqdm(test_loader):
+            batch_x = batch_x.to(device)
+            batch_y = batch_y.to(device)
+            logits = model(batch_x).unsqueeze(-1)
+            probs = torch.softmax(logits, dim=1)
+            loss += F.cross_entropy(probs, batch_y.unsqueeze(-1)).item()
+    model.train()
+    return loss
+
 use_cuda = args.use_cuda and torch.cuda.is_available()
 print(f'Using cuda: {use_cuda}')
 device = torch.device('cuda') if use_cuda else None
@@ -52,12 +66,12 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
 # Train
 train_losses = []
-# test_losses = []
+val_losses = []
 
 for epoch in range(n_epochs):
     for (batch_x, batch_y) in tqdm(train_loader):
-        batch_x = batch_x.to(device)
-        batch_y = batch_y.to(device)
+        batch_x = batch_x[:2].to(device)
+        batch_y = batch_y[:2].to(device)
         logits = model(batch_x).unsqueeze(-1)
         probs = torch.softmax(logits, dim=1)
         loss = F.cross_entropy(probs, batch_y.unsqueeze(-1))
@@ -66,6 +80,7 @@ for epoch in range(n_epochs):
         optimizer.step()
         train_losses.append(loss.item())
 
-    print(f'{epoch + 1}/{n_epochs} epochs | loss = {loss.item()}')
+    val_loss = val_loss(model, test_loader)
+    print(f'{epoch + 1}/{n_epochs} epochs | val_loss = {val_loss:.3f}')
 
 
