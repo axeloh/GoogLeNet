@@ -51,12 +51,9 @@ def compute_val_loss_acc(model, test_loader):
             loss += F.cross_entropy(logits, batch_y.unsqueeze(-1)).item()
 
             probs = torch.softmax(logits, dim=1)
-            winners = probs.argmax(dim=1)
-            print(winners.shape)
-            print(batch_y.shape)
+            winners = probs.argmax(dim=1).squeeze()
             corrects = (winners == batch_y)
             accuracy = corrects.sum().float() / float(batch_y.size(0))
-            #print(accuracy)
             accs.append(accuracy)
     mean_acc = torch.mean(torch.tensor(accs))
     mean_loss = loss / len(test_loader)
