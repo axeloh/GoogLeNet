@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='cifar10', choices=['cifar10', 'cifar100'])
 parser.add_argument('--n_epochs', type=int, default=50)
 parser.add_argument('--batch_size', type=int, default=64)
-parser.add_argument('--lr',  type=int, default=0.01)
+parser.add_argument('--lr',  type=int, default=1e-3)
 parser.add_argument('--use_cuda',  type=bool, default=True)
 
 args = parser.parse_args()
