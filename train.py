@@ -52,6 +52,7 @@ def compute_val_loss(model, test_loader):
     model.train()
     return loss
 
+
 use_cuda = args.use_cuda and torch.cuda.is_available()
 print(f'Using cuda: {use_cuda}')
 device = torch.device('cuda') if use_cuda else None
@@ -78,7 +79,7 @@ for epoch in range(n_epochs):
         logits = model(batch_x).unsqueeze(-1)
         probs = torch.softmax(logits, dim=1)
         optimizer.zero_grad()
-        
+
         loss = F.cross_entropy(probs, batch_y.unsqueeze(-1))
         loss.backward()
         optimizer.step()

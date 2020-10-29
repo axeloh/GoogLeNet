@@ -43,6 +43,8 @@ class GoogLeNet(nn.Module):
         self.dropout = nn.Dropout(0.4)
         self.fc1 = nn.Linear(1024, num_classes)
 
+        print(f'GoogLeNet initialized with in_channels={in_channels}, outdim={num_classes}')
+
     def forward(self, x):
         # x is (n, in_channels, 224, 224)
         x = self.conv1(x)
