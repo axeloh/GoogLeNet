@@ -78,10 +78,10 @@ for epoch in range(n_epochs):
         batch_x = batch_x.to(device)
         batch_y = batch_y.to(device)
         logits = model(batch_x).unsqueeze(-1)
-        probs = torch.softmax(logits, dim=1)
+        # probs = torch.softmax(logits, dim=1)  # F.cross_entropy expects logits
         optimizer.zero_grad()
 
-        loss = F.cross_entropy(probs, batch_y.unsqueeze(-1))
+        loss = F.cross_entropy(logits, batch_y.unsqueeze(-1))
         loss.backward()
         optimizer.step()
         train_losses.append(loss.item())
