@@ -114,6 +114,10 @@ for epoch in range(n_epochs):
 
     print(f'{epoch + 1}/{n_epochs} epochs | train_loss = {loss:.3f} | train_acc = {train_acc:.3f} | val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
 
+    # Save model
+    if epoch % 3 == 0:
+        torch.save(model.state_dict(), f'models/model_{args.dataset}_epoch{epoch}')
+
 # Plot
 plt.plot([i for i in range(len(train_losses))], train_losses, label='train loss')
 plt.plot([i for i in range(len(train_losses))], train_accs, label='train acc')
