@@ -10,6 +10,7 @@ import torchvision.transforms as transforms
 import torch.nn.functional as F
 from tqdm import tqdm
 from inception_net import GoogLeNet
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 
@@ -83,8 +84,6 @@ val_losses = []
 val_accs = []
 
 init_loss, init_acc = compute_val_loss_acc(model, test_loader)
-val_losses.append(init_loss)
-val_accs.append(init_acc)
 print(f'Init val loss: {init_loss:.3f}')
 print(f'Init val accuracy: {init_acc:.3f}')
 
@@ -100,16 +99,31 @@ for epoch in range(n_epochs):
         loss.backward()
         optimizer.step()
 
-        probs = torch.softmax(logits, dim=1)
-        winners = probs.argmax(dim=1).squeeze()
-        corrects = (winners == batch_y)
-        train_acc = corrects.sum().float() / float(batch_y.size(0))
-        train_accs.append(train_acc)
-        train_losses.append(loss.item())
+    # Calc train accuracy
+    probs = torch.softmax(logits, dim=1)
+    winners = probs.argmax(dim=1).squeeze()
+    corrects = (winners == batch_y)
+    train_acc = corrects.sum().float() / float(batch_y.size(0))
+    train_accs.append(train_acc)
+    train_losses.append(loss.item())
 
+    # Calc val loss and accuracy
     val_loss, val_acc = compute_val_loss_acc(model, test_loader)
     val_losses.append(val_loss)
     val_accs.append(val_acc)
+
     print(f'{epoch + 1}/{n_epochs} epochs | train_loss = {loss:.3f} | train_acc = {train_acc:.3f} | val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
+
+# Plot
+plt.plot([i for i in range(len(train_losses))], train_losses, label='train loss')
+plt.plot([i for i in range(len(train_losses))], train_accs, label='train acc')
+plt.plot([i for i in range(len(train_losses))], val_losses, label='val loss')
+plt.plot([i for i in range(len(train_losses))], val_accs, label='val acc')
+plt.title('Loss and Accuracy during training')
+plt.xlabel('Epoch #')
+plt.ylabel('Loss/Accuracy')
+plt.savefig('output/loss_accuracy_plot')
+
+
 
 
