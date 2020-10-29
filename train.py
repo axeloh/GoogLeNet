@@ -78,8 +78,13 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
 # Train
 train_losses = []
+train_accs = []
 val_losses = []
+val_accs = []
+
 init_loss, init_acc = compute_val_loss_acc(model, test_loader)
+val_losses.append(init_loss)
+val_accs.append(init_acc)
 print(f'Init val loss: {init_loss:.3f}')
 print(f'Init val accuracy: {init_acc:.3f}')
 
@@ -94,9 +99,17 @@ for epoch in range(n_epochs):
         loss = F.cross_entropy(logits, batch_y.unsqueeze(-1))
         loss.backward()
         optimizer.step()
+
+        probs = torch.softmax(logits, dim=1)
+        winners = probs.argmax(dim=1).squeeze()
+        corrects = (winners == batch_y)
+        train_acc = corrects.sum().float() / float(batch_y.size(0))
+        train_accs.append(train_acc)
         train_losses.append(loss.item())
 
     val_loss, val_acc = compute_val_loss_acc(model, test_loader)
-    print(f'{epoch + 1}/{n_epochs} epochs | val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
+    val_losses.append(val_loss)
+    val_accs.append(val_acc)
+    print(f'{epoch + 1}/{n_epochs} epochs | train_loss = {loss:.3f} | train_acc = {train_acc:.3f} | val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
 
 
