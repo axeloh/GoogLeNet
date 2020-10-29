@@ -116,7 +116,7 @@ for epoch in range(n_epochs):
 
     # Save model
     if epoch % 3 == 0:
-        torch.save(model.state_dict(), f'models/model_{args.dataset}_epoch{epoch}')
+        torch.save(model.state_dict(), f'models/model_{args.dataset}_epoch{epoch}.pt')
 
 # Plot
 plt.plot([i for i in range(len(train_losses))], train_losses, label='train loss')
