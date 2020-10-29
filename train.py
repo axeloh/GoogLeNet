@@ -67,12 +67,12 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 # Train
 train_losses = []
 val_losses = []
-print(f'Init val loss: {compute_val_loss(model, test_loader)}')
+print(f'Init val loss: {compute_val_loss(model, test_loader):.3f}')
 
 for epoch in range(n_epochs):
     for (batch_x, batch_y) in tqdm(train_loader):
-        batch_x = batch_x[:2].to(device)
-        batch_y = batch_y[:2].to(device)
+        batch_x = batch_x.to(device)
+        batch_y = batch_y.to(device)
         logits = model(batch_x).unsqueeze(-1)
         probs = torch.softmax(logits, dim=1)
         loss = F.cross_entropy(probs, batch_y.unsqueeze(-1))
