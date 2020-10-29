@@ -28,11 +28,13 @@ transform = transforms.Compose([
         ])
 
 
+num_classes = 10
 if args.dataset == 'cifar10':
     train_data = CIFAR10(root='data/cifar10', train=True, download=True, transform=transform)
     test_data = CIFAR10(root='data/cifar10', train=False, download=True, transform=transform)
 
 if args.dataset == 'cifar100':
+    num_classes = 100
     train_data = CIFAR100(root='data/cifar100', train=True, download=True, transform=transform)
     test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform)
 
@@ -60,7 +62,7 @@ lr = args.lr
 train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False)
 
-model = GoogLeNet().to(device)
+model = GoogLeNet(num_classes=num_classes).to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
