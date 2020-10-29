@@ -83,9 +83,9 @@ train_accs = []
 val_losses = []
 val_accs = []
 
-init_loss, init_acc = compute_val_loss_acc(model, test_loader)
-print(f'Init val loss: {init_loss:.3f}')
-print(f'Init val accuracy: {init_acc:.3f}')
+#init_loss, init_acc = compute_val_loss_acc(model, test_loader)
+#print(f'Init val loss: {init_loss:.3f}')
+#print(f'Init val accuracy: {init_acc:.3f}')
 
 for epoch in range(n_epochs):
     for (batch_x, batch_y) in tqdm(train_loader):
@@ -123,7 +123,8 @@ plt.title('Loss and Accuracy during training')
 plt.xlabel('Epoch #')
 plt.ylabel('Loss/Accuracy')
 plt.legend()
-plt.savefig('output/loss_accuracy_plot')
+plt.grid(alpha=0.5, linestyle='--')
+plt.savefig('output/loss_accuracy_plot', bbox_inches='tight')
 
 
 
