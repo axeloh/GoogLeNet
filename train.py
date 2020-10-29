@@ -63,6 +63,18 @@ def compute_val_loss_acc(model, test_loader):
     return mean_loss, mean_acc
 
 
+def save_plot(tlosses, taccs, vlosses, vaccs, epoch):
+    plt.plot([i for i in range(len(tlosses))], tlosses, label='train loss')
+    plt.plot([i for i in range(len(tlosses))], taccs, label='train acc')
+    plt.plot([i for i in range(len(tlosses))], vlosses, label='val loss')
+    plt.plot([i for i in range(len(tlosses))], vaccs, label='val acc')
+    plt.title(f'Loss and Accuracy during training [Epoch {epoch}]')
+    plt.xlabel('Epoch #')
+    plt.ylabel('Loss/Accuracy')
+    plt.legend()
+    plt.grid(alpha=0.5, linestyle='--')
+    plt.savefig('output/loss_accuracy_plot', bbox_inches='tight')
+
 use_cuda = args.use_cuda and torch.cuda.is_available()
 print(f'Using cuda: {use_cuda}')
 device = torch.device('cuda') if use_cuda else None
@@ -114,21 +126,13 @@ for epoch in range(n_epochs):
 
     print(f'{epoch + 1}/{n_epochs} epochs | train_loss = {loss:.3f} | train_acc = {train_acc:.3f} | val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
 
-    # Save model
+    # Save model and plot
     if epoch % 3 == 0:
         torch.save(model.state_dict(), f'models/model_{args.dataset}_epoch{epoch}.pt')
+        save_plot(train_losses, train_accs, val_losses, val_accs, epoch)
 
-# Plot
-plt.plot([i for i in range(len(train_losses))], train_losses, label='train loss')
-plt.plot([i for i in range(len(train_losses))], train_accs, label='train acc')
-plt.plot([i for i in range(len(train_losses))], val_losses, label='val loss')
-plt.plot([i for i in range(len(train_losses))], val_accs, label='val acc')
-plt.title('Loss and Accuracy during training')
-plt.xlabel('Epoch #')
-plt.ylabel('Loss/Accuracy')
-plt.legend()
-plt.grid(alpha=0.5, linestyle='--')
-plt.savefig('output/loss_accuracy_plot', bbox_inches='tight')
+
+print(f'Training done.')
 
 
 
