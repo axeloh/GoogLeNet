@@ -52,7 +52,7 @@ def compute_val_loss_acc(model, test_loader):
             probs = torch.softmax(logits, dim=1)
             winners = probs.argmax(dim=1)
             corrects = (winners == batch_y)
-            accuracy = corrects.sum().float() / batch_y.size(0).float()
+            accuracy = corrects.sum().float() / float(batch_y.size(0))
             accs.append(accuracy)
     mean_acc = torch.tensor(accs).mean()
     model.train()
