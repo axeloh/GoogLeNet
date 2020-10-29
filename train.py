@@ -39,18 +39,25 @@ if args.dataset == 'cifar100':
     test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform)
 
 
-def compute_val_loss(model, test_loader):
+def compute_val_loss_acc(model, test_loader):
     model.eval()
     loss = 0
+    accs = []
     with torch.no_grad():
         for (batch_x, batch_y) in tqdm(test_loader):
             batch_x = batch_x.to(device)
             batch_y = batch_y.to(device)
             logits = model(batch_x).unsqueeze(-1)
+            loss += F.cross_entropy(logits, batch_y.unsqueeze(-1)).item()
             probs = torch.softmax(logits, dim=1)
-            loss += F.cross_entropy(probs, batch_y.unsqueeze(-1)).item()
+            winners = probs.argmax(probs, dim=1)
+            corrects = (winners == batch_y)
+            accuracy = corrects.sum().float() / batch_y.size(0).float()
+            accs.append(accuracy)
+    mean_acc = torch.tensor(accs).mean()
     model.train()
-    return loss
+
+    return loss, mean_acc
 
 
 use_cuda = args.use_cuda and torch.cuda.is_available()
@@ -70,7 +77,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 # Train
 train_losses = []
 val_losses = []
-init_loss = compute_val_loss(model, test_loader)
+init_loss, init_acc = compute_val_loss_acc(model, test_loader)
 print(f'Init val loss: {init_loss:.3f}')
 
 for epoch in range(n_epochs):
@@ -86,7 +93,7 @@ for epoch in range(n_epochs):
         optimizer.step()
         train_losses.append(loss.item())
 
-    val_loss = compute_val_loss(model, test_loader)
-    print(f'{epoch + 1}/{n_epochs} epochs | val_loss = {val_loss:.3f}')
+    val_loss, val_acc = compute_val_loss_acc(model, test_loader)
+    print(f'{epoch + 1}/{n_epochs} epochs | val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
 
 
