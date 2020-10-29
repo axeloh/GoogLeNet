@@ -53,11 +53,13 @@ def compute_val_loss_acc(model, test_loader):
             winners = probs.argmax(dim=1)
             corrects = (winners == batch_y)
             accuracy = corrects.sum().float() / float(batch_y.size(0))
+            print(accuracy)
             accs.append(accuracy)
-    mean_acc = torch.tensor(accs).mean()
+    mean_acc = torch.mean(torch.tensor(accs))
+    mean_loss = loss / len(test_loader)
     model.train()
 
-    return loss, mean_acc
+    return mean_loss, mean_acc
 
 
 use_cuda = args.use_cuda and torch.cuda.is_available()
@@ -79,6 +81,7 @@ train_losses = []
 val_losses = []
 init_loss, init_acc = compute_val_loss_acc(model, test_loader)
 print(f'Init val loss: {init_loss:.3f}')
+print(f'Init val accuracy: {init_acc:.3f}')
 
 for epoch in range(n_epochs):
     for (batch_x, batch_y) in tqdm(train_loader):
