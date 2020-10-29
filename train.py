@@ -50,7 +50,7 @@ def compute_val_loss_acc(model, test_loader):
             logits = model(batch_x).unsqueeze(-1)
             loss += F.cross_entropy(logits, batch_y.unsqueeze(-1)).item()
             probs = torch.softmax(logits, dim=1)
-            winners = probs.argmax(probs, dim=1)
+            winners = probs.argmax(dim=1)
             corrects = (winners == batch_y)
             accuracy = corrects.sum().float() / batch_y.size(0).float()
             accs.append(accuracy)
