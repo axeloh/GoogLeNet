@@ -122,6 +122,7 @@ plt.plot([i for i in range(len(train_losses))], val_accs, label='val acc')
 plt.title('Loss and Accuracy during training')
 plt.xlabel('Epoch #')
 plt.ylabel('Loss/Accuracy')
+plt.legend()
 plt.savefig('output/loss_accuracy_plot')
 
 
