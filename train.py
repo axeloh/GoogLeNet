@@ -120,6 +120,8 @@ for epoch in range(n_epochs):
     #train_accs.append(train_acc)
     #train_losses.append(loss.item())
     train_loss, train_acc = compute_loss_acc(model, train_loader)
+    train_accs.append(train_acc)
+    train_losses.append(train_loss)
 
     # Calc val loss and accuracy
     val_loss, val_acc = compute_loss_acc(model, test_loader)
