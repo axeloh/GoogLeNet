@@ -46,7 +46,7 @@ if args.dataset == 'cifar10':
     train_data = CIFAR10(root='data/cifar10', train=True, download=True, transform=transform['train'])
     test_data = CIFAR10(root='data/cifar10', train=False, download=True, transform=transform['test'])
 
-if args.dataset == 'cifar100':
+elif args.dataset == 'cifar100':
     num_classes = 100
     train_data = CIFAR100(root='data/cifar100', train=True, download=True, transform=transform['train'])
     test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform['test'])
@@ -75,7 +75,7 @@ def compute_loss_acc(model, test_loader):
     return mean_loss, mean_acc
 
 
-def save_acc_plot(taccs, vaccs, epoch):
+def save_acc_plot(taccs, vaccs, epoch, modelname):
     plt.plot([i for i in range(len(taccs))], taccs, label='train acc')
     plt.plot([i for i in range(len(taccs))], vaccs, label='val acc')
     plt.title(f'Accuracy during training [Epoch {epoch}]')
@@ -83,11 +83,11 @@ def save_acc_plot(taccs, vaccs, epoch):
     plt.ylabel('Accuracy')
     plt.legend()
     plt.grid(alpha=0.5, linestyle='--')
-    plt.savefig('output/acc_plot', bbox_inches='tight')
+    plt.savefig(f'output/{modelname}_acc_plot', bbox_inches='tight')
     plt.clf()
 
 
-def save_loss_plot(tlosses, vlosses, epoch):
+def save_loss_plot(tlosses, vlosses, epoch, modelname):
     plt.plot([i for i in range(len(tlosses))], tlosses, label='train loss')
     plt.plot([i for i in range(len(tlosses))], vlosses, label='val loss')
     plt.title(f'Loss during training [Epoch {epoch}]')
@@ -95,7 +95,7 @@ def save_loss_plot(tlosses, vlosses, epoch):
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(alpha=0.5, linestyle='--')
-    plt.savefig('output/loss_plot', bbox_inches='tight')
+    plt.savefig(f'output/{modelname}_loss_plot', bbox_inches='tight')
     plt.clf()
 
 
@@ -130,7 +130,6 @@ for epoch in range(n_epochs):
         batch_x = batch_x.to(device)
         batch_y = batch_y.to(device)
         logits = model(batch_x).unsqueeze(-1)
-        # probs = torch.softmax(logits, dim=1)  # F.cross_entropy expects logits
         optimizer.zero_grad()
 
         loss = F.cross_entropy(logits, batch_y.unsqueeze(-1))
@@ -161,8 +160,8 @@ for epoch in range(n_epochs):
         torch.save(model.state_dict(), f'models/{args.modelname}_{args.dataset}_epoch{epoch}.pt')
 
     # Save plot
-    save_acc_plot(train_accs, val_accs, epoch)
-    save_loss_plot(train_losses, val_losses, epoch)
+    save_acc_plot(train_accs, val_accs, epoch, args.modelname)
+    save_loss_plot(train_losses, val_losses, epoch, args.modelname)
 
 
 print(f'Training done.')
