@@ -18,3 +18,9 @@ $ python train.py --dataset cifar100 --n_epochs 100 --batch_size 128 --lr 5e-3 -
 Model saved every third epoch in ``` models/ ```.
 Loss and accuracy for train set and validation set saved in ``` output/ ```.
 
+
+### Loss during training 
+![Alt text](/output/loss_plot.png?raw=true)
+
+### Accuracy during training 
+![Alt text](/output/acc_plot.png?raw=true)
