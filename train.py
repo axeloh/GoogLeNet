@@ -149,7 +149,12 @@ for epoch in range(n_epochs):
         optimizer.step()
 
     if args.lr_scheduler:
-        scheduler.step()
+        #scheduler.step()
+
+        # Update learning rate
+        new_lr = poly_decay(n_epochs, epoch, lr)
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = new_lr
 
     # Calc train accuracy
     probs = torch.softmax(logits, dim=1)
