@@ -12,7 +12,7 @@ $ python train.py
 
 Example of train with other than default params:
 ``` 
-$ python train.py --dataset cifar100 --epochs 100 --bs 128 --lr 5e-3 --gpu False --modelname mymodel --save_every 5 --lr_scheduler False
+$ python train.py --dataset cifar100 --epochs 100 --bs 128 --lr 5e-3 --gpu False --modelname mymodel --save_every 10 --lr_scheduler False
 ```
 (GPU strongly recommended!)
 
