@@ -74,6 +74,7 @@ def save_plot(tlosses, taccs, vlosses, vaccs, epoch):
     plt.legend()
     plt.grid(alpha=0.5, linestyle='--')
     plt.savefig('output/loss_accuracy_plot', bbox_inches='tight')
+    plt.clf()
 
 
 use_cuda = args.use_cuda and torch.cuda.is_available()
@@ -129,7 +130,7 @@ for epoch in range(n_epochs):
           f'val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
 
     # Save model and plot
-    if epoch % 3 == 0:
+    if epoch % 2 == 0:
         torch.save(model.state_dict(), f'models/model_{args.dataset}_epoch{epoch}.pt')
         save_plot(train_losses, train_accs, val_losses, val_accs, epoch)
 
