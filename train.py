@@ -1,6 +1,5 @@
-
-
 from torchvision.datasets import MNIST, FashionMNIST, CIFAR10, CIFAR100
+from torch.optim.lr_scheduler import StepLR
 import warnings
 import argparse
 import torch.optim as optim
@@ -12,32 +11,45 @@ from tqdm import tqdm
 from inception_net import GoogLeNet
 import matplotlib.pyplot as plt
 
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--dataset', type=str, default='cifar10', choices=['cifar10', 'cifar100'])
-parser.add_argument('--n_epochs', type=int, default=50)
-parser.add_argument('--batch_size', type=int, default=64)
+parser.add_argument('--epochs', type=int, default=50)
+parser.add_argument('--bs', type=int, default=64)
 parser.add_argument('--lr',  type=int, default=1e-3)
-parser.add_argument('--use_cuda',  type=bool, default=True)
+parser.add_argument('--gpu',  type=bool, default=True)
+parser.add_argument('--modelname',  type=str, default='model')
+parser.add_argument('--save_every',  type=int, default=5)
+parser.add_argument('--lr_scheduler',  type=bool, default=True)
 
 args = parser.parse_args()
 
-transform = transforms.Compose([
-            transforms.Resize((224, 224), interpolation=2),
+transform = {
+    'train': transforms.Compose([
+            transforms.RandomResizedCrop((224, 224), interpolation=2),
+            transforms.RandomHorizontalFlip(),
+            transforms.ColorJitter(),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,))
-        ])
+        ]),
+    'test': transforms.Compose([
+        transforms.Resize((224, 224), interpolation=2),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5,), (0.5,))
+    ])
+}
 
 
 num_classes = 10
 if args.dataset == 'cifar10':
-    train_data = CIFAR10(root='data/cifar10', train=True, download=True, transform=transform)
-    test_data = CIFAR10(root='data/cifar10', train=False, download=True, transform=transform)
+    train_data = CIFAR10(root='data/cifar10', train=True, download=True, transform=transform['train'])
+    test_data = CIFAR10(root='data/cifar10', train=False, download=True, transform=transform['test'])
 
 if args.dataset == 'cifar100':
     num_classes = 100
-    train_data = CIFAR100(root='data/cifar100', train=True, download=True, transform=transform)
-    test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform)
+    train_data = CIFAR100(root='data/cifar100', train=True, download=True, transform=transform['train'])
+    test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform['test'])
 
 
 def compute_loss_acc(model, test_loader):
@@ -87,11 +99,11 @@ def save_loss_plot(tlosses, vlosses, epoch):
     plt.clf()
 
 
-use_cuda = args.use_cuda and torch.cuda.is_available()
+use_cuda = args.gpu and torch.cuda.is_available()
 print(f'Using cuda: {use_cuda}')
 device = torch.device('cuda') if use_cuda else None
-n_epochs = args.n_epochs
-batch_size = args.batch_size
+n_epochs = args.epochs
+batch_size = args.bs
 lr = args.lr
 
 train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
@@ -100,6 +112,8 @@ test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuf
 model = GoogLeNet(num_classes=num_classes).to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+if args.lr_scheduler:
+    scheduler = StepLR(optimizer, step_size=25, gamma=0.1)
 
 # Train
 train_losses = []
@@ -123,6 +137,9 @@ for epoch in range(n_epochs):
         loss.backward()
         optimizer.step()
 
+    if args.lr_scheduler:
+        scheduler.step()
+
     # Calc train accuracy
     probs = torch.softmax(logits, dim=1)
     winners = probs.argmax(dim=1).squeeze()
@@ -139,11 +156,13 @@ for epoch in range(n_epochs):
     print(f'{epoch + 1}/{n_epochs} epochs | train_loss = {loss.item():.3f} | train_acc = {train_acc.item():.3f} | '
           f'val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
 
-    # Save model and plot
-    if epoch % 1 == 0:
-        torch.save(model.state_dict(), f'models/model_{args.dataset}_epoch{epoch}.pt')
-        save_acc_plot(train_accs, val_accs, epoch)
-        save_loss_plot(train_losses, val_losses, epoch)
+    # Save model
+    if epoch % args.save_every == 0:
+        torch.save(model.state_dict(), f'models/{args.modelname}_{args.dataset}_epoch{epoch}.pt')
+
+    # Save plot
+    save_acc_plot(train_accs, val_accs, epoch)
+    save_loss_plot(train_losses, val_losses, epoch)
 
 
 print(f'Training done.')
