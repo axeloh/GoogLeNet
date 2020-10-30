@@ -27,7 +27,7 @@ args = parser.parse_args()
 
 transform = {
     'train': transforms.Compose([
-            transforms.RandomResizedCrop((224, 224), interpolation=2),
+            transforms.Resize((224, 224), interpolation=2),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,))
@@ -49,6 +49,19 @@ elif args.dataset == 'cifar100':
     num_classes = 100
     train_data = CIFAR100(root='data/cifar100', train=True, download=True, transform=transform['train'])
     test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform['test'])
+
+
+def poly_decay(n_epochs, epoch, init_lr, power=1.0):
+    # initialize the maximum number of epochs, base learning rate,
+    # and power of the polynomial
+    maxEpochs = n_epochs
+    baseLR = init_lr
+
+    # compute the new learning rate based on polynomial decay
+    alpha = baseLR * (1 - (epoch / float(maxEpochs))) ** power
+
+    # return the new learning rate
+    return alpha
 
 
 def compute_loss_acc(model, test_loader):
