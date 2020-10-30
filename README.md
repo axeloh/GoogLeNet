@@ -20,7 +20,7 @@ Loss and accuracy for train set and validation set saved in ``` output/ ```.
 
 
 ### Loss during training 
-![Alt text](/output/acc_plot.png?raw=true)
+![Alt text](/output/loss_plot.png?raw=true)
 
 ### Accuracy during training 
 ![Alt text](/output/acc_plot.png?raw=true)
