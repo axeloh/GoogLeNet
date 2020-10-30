@@ -113,22 +113,20 @@ for epoch in range(n_epochs):
         optimizer.step()
 
     # Calc train accuracy
-    #probs = torch.softmax(logits, dim=1)
-    #winners = probs.argmax(dim=1).squeeze()
-    #corrects = (winners == batch_y)
-    #train_acc = corrects.sum().float() / float(batch_y.size(0))
-    #train_accs.append(train_acc)
-    #train_losses.append(loss.item())
-    train_loss, train_acc = compute_loss_acc(model, train_loader)
-    train_accs.append(train_acc)
-    train_losses.append(train_loss)
+    probs = torch.softmax(logits, dim=1)
+    winners = probs.argmax(dim=1).squeeze()
+    corrects = (winners == batch_y)
+    train_acc = corrects.sum().float() / float(batch_y.size(0))
+    train_accs.append(train_acc.item())
+    train_losses.append(loss.item())
 
     # Calc val loss and accuracy
     val_loss, val_acc = compute_loss_acc(model, test_loader)
     val_losses.append(val_loss)
     val_accs.append(val_acc)
 
-    print(f'{epoch + 1}/{n_epochs} epochs | train_loss = {train_loss:.3f} | train_acc = {train_acc:.3f} | val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
+    print(f'{epoch + 1}/{n_epochs} epochs | train_loss = {loss.item():.3f} | train_acc = {train_acc.item():.3f} | '
+          f'val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
 
     # Save model and plot
     if epoch % 3 == 0:
