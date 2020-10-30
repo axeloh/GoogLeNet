@@ -63,17 +63,27 @@ def compute_loss_acc(model, test_loader):
     return mean_loss, mean_acc
 
 
-def save_plot(tlosses, taccs, vlosses, vaccs, epoch):
-    plt.plot([i for i in range(len(tlosses))], tlosses, label='train loss')
-    plt.plot([i for i in range(len(tlosses))], taccs, label='train acc')
-    plt.plot([i for i in range(len(tlosses))], vlosses, label='val loss')
-    plt.plot([i for i in range(len(tlosses))], vaccs, label='val acc')
-    plt.title(f'Loss and Accuracy during training [Epoch {epoch}]')
+def save_acc_plot(taccs, vaccs, epoch):
+    plt.plot([i for i in range(len(taccs))], taccs, label='train acc')
+    plt.plot([i for i in range(len(taccs))], vaccs, label='val acc')
+    plt.title(f'Accuracy during training [Epoch {epoch}]')
     plt.xlabel('Epoch #')
-    plt.ylabel('Loss/Accuracy')
+    plt.ylabel('Accuracy')
     plt.legend()
     plt.grid(alpha=0.5, linestyle='--')
-    plt.savefig('output/loss_accuracy_plot', bbox_inches='tight')
+    plt.savefig('output/acc_plot', bbox_inches='tight')
+    plt.clf()
+
+
+def save_loss_plot(tlosses, vlosses, epoch):
+    plt.plot([i for i in range(len(tlosses))], tlosses, label='train loss')
+    plt.plot([i for i in range(len(tlosses))], vlosses, label='val loss')
+    plt.title(f'Loss during training [Epoch {epoch}]')
+    plt.xlabel('Epoch #')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(alpha=0.5, linestyle='--')
+    plt.savefig('output/loss_plot', bbox_inches='tight')
     plt.clf()
 
 
@@ -130,9 +140,10 @@ for epoch in range(n_epochs):
           f'val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
 
     # Save model and plot
-    if epoch % 2 == 0:
+    if epoch % 1 == 0:
         torch.save(model.state_dict(), f'models/model_{args.dataset}_epoch{epoch}.pt')
-        save_plot(train_losses, train_accs, val_losses, val_accs, epoch)
+        save_acc_plot(train_accs, val_accs, epoch)
+        save_loss_plot(train_losses, val_losses, epoch)
 
 
 print(f'Training done.')
