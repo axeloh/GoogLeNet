@@ -10,17 +10,23 @@ $ cd GoogLeNet
 $ python train.py
 ```
 
-With other than default params:
+Example of train with other than default params:
 ``` 
-$ python train.py --dataset cifar100 --n_epochs 100 --batch_size 128 --lr 5e-3 --use_cuda False
+$ python train.py --dataset cifar100 --epochs 100 --bs 128 --lr 5e-3 --gpu False --modelname mymodel --save_every 10 --lr_scheduler False
 ```
-
-Model saved every third epoch in ``` models/ ```.
-Loss and accuracy for train set and validation set saved in ``` output/ ```.
+(GPU strongly recommended!)
 
 
-### Loss during training 
-![Alt text](/output/loss_plot.png?raw=true)
+Model saved in ``` models/ ```, loss and accuracy plot for train and validation set saved in ``` output/ ```.
 
-### Accuracy during training 
-![Alt text](/output/acc_plot.png?raw=true)
+
+### Without data augmentation and learning rate scheduler:
+
+Loss | Accuracy
+:--- | :---
+![Alt text](/output/loss_plot.png?raw=true) | ![Alt text](/output/acc_plot.png?raw=true)
+
+
+### With data augmentation and with a step learning rate scheduler:
+Loss | Accuracy
+:--- | :---
