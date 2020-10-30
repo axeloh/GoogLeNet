@@ -40,7 +40,7 @@ if args.dataset == 'cifar100':
     test_data = CIFAR100(root='data/cifar100', train=False, download=True, transform=transform)
 
 
-def compute_val_loss_acc(model, test_loader):
+def compute_loss_acc(model, test_loader):
     model.eval()
     loss = 0
     accs = []
@@ -96,7 +96,7 @@ train_accs = []
 val_losses = []
 val_accs = []
 
-init_loss, init_acc = compute_val_loss_acc(model, test_loader)
+init_loss, init_acc = compute_loss_acc(model, test_loader)
 print(f'Init val loss: {init_loss:.3f}')
 print(f'Init val accuracy: {init_acc:.3f}')
 
@@ -113,19 +113,20 @@ for epoch in range(n_epochs):
         optimizer.step()
 
     # Calc train accuracy
-    probs = torch.softmax(logits, dim=1)
-    winners = probs.argmax(dim=1).squeeze()
-    corrects = (winners == batch_y)
-    train_acc = corrects.sum().float() / float(batch_y.size(0))
-    train_accs.append(train_acc)
-    train_losses.append(loss.item())
+    #probs = torch.softmax(logits, dim=1)
+    #winners = probs.argmax(dim=1).squeeze()
+    #corrects = (winners == batch_y)
+    #train_acc = corrects.sum().float() / float(batch_y.size(0))
+    #train_accs.append(train_acc)
+    #train_losses.append(loss.item())
+    train_loss, train_acc = compute_loss_acc(model, train_loader)
 
     # Calc val loss and accuracy
-    val_loss, val_acc = compute_val_loss_acc(model, test_loader)
+    val_loss, val_acc = compute_loss_acc(model, test_loader)
     val_losses.append(val_loss)
     val_accs.append(val_acc)
 
-    print(f'{epoch + 1}/{n_epochs} epochs | train_loss = {loss:.3f} | train_acc = {train_acc:.3f} | val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
+    print(f'{epoch + 1}/{n_epochs} epochs | train_loss = {train_loss:.3f} | train_acc = {train_acc:.3f} | val_loss = {val_loss:.3f} | val_acc = {val_acc:.3f}')
 
     # Save model and plot
     if epoch % 3 == 0:
