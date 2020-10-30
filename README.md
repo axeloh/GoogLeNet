@@ -30,5 +30,5 @@ Loss | Accuracy
 ### With data augmentation and with a step learning rate scheduler:
 Loss | Accuracy
 :--- | :---
-![Alt text](/output/model_augmented_loss_plot?raw=true) | ![Alt text](/output/model_augmented_acc_plot.png?raw=true)
+![Alt text](/output/model_augmented_loss_plot.png?raw=true) | ![Alt text](/output/model_augmented_acc_plot.png?raw=true)
 
