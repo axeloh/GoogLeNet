@@ -14,6 +14,8 @@ Example of train with other than default params:
 ``` 
 $ python train.py --dataset cifar100 --epochs 100 --bs 128 --lr 5e-3 --gpu False --modelname mymodel --save_every 5 --lr_scheduler False
 ```
+(GPU strongly recommended!)
+
 
 Model saved in ``` models/ ```, loss and accuracy plot for train and validation set saved in ``` output/ ```.
 
