@@ -20,13 +20,13 @@ $ python train.py --dataset cifar100 --epochs 100 --bs 128 --lr 5e-3 --gpu False
 Model saved in ``` models/ ```, loss and accuracy plot for train and validation set saved in ``` output/ ```.
 
 
-### Model without data augmentation and learning rate scheduler:
+### Without data augmentation and learning rate scheduler:
 
 Loss | Accuracy
 :--- | :---
 ![Alt text](/output/loss_plot.png?raw=true) | ![Alt text](/output/acc_plot.png?raw=true)
 
 
-### Model with data augmentation and with step learning rate scheduler:
+### With data augmentation and with a step learning rate scheduler:
 Loss | Accuracy
 :--- | :---
