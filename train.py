@@ -75,6 +75,7 @@ def save_plot(tlosses, taccs, vlosses, vaccs, epoch):
     plt.grid(alpha=0.5, linestyle='--')
     plt.savefig('output/loss_accuracy_plot', bbox_inches='tight')
 
+
 use_cuda = args.use_cuda and torch.cuda.is_available()
 print(f'Using cuda: {use_cuda}')
 device = torch.device('cuda') if use_cuda else None
@@ -95,9 +96,9 @@ train_accs = []
 val_losses = []
 val_accs = []
 
-#init_loss, init_acc = compute_val_loss_acc(model, test_loader)
-#print(f'Init val loss: {init_loss:.3f}')
-#print(f'Init val accuracy: {init_acc:.3f}')
+init_loss, init_acc = compute_val_loss_acc(model, test_loader)
+print(f'Init val loss: {init_loss:.3f}')
+print(f'Init val accuracy: {init_acc:.3f}')
 
 for epoch in range(n_epochs):
     for (batch_x, batch_y) in tqdm(train_loader):
