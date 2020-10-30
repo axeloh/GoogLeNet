@@ -20,7 +20,7 @@ $ python train.py --dataset cifar100 --epochs 100 --bs 128 --lr 5e-3 --gpu False
 Model saved in ``` models/ ```, loss and accuracy plot for train and validation set saved in ``` output/ ```.
 
 
-### Model trained on CIFAR100
+### ----- Model trained on CIFAR100
 #### Without data augmentation and learning rate scheduler:
 
 Loss | Accuracy
