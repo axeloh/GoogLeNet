@@ -1,4 +1,5 @@
 # GoogLeNet/InceptionNet for CIFAR10/100
+Pytorch implementation from scratch.
 
 ``` 
 $ git clone https://github.com/axeloh/GoogLeNet.git
